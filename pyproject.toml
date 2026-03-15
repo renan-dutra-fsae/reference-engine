@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "reference_engine"
+version = "0.1.0"
+description = "Rigid body and reference frame dynamics engine"
+dependencies = [
+    "numpy>=1.25",
+    "scipy>=1.10",
+    "matplotlib"
+]
+
+[project.optional-dependencies]
+examples = [
+    "matplotlib"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
