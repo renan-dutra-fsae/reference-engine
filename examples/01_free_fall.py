@@ -1,20 +1,19 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
-from reference_engine import Frame, Body
-
-
-WORLD = Frame("world", origin=np.array([0.0, 0.0]))
+from reference_engine import Frame, Body, World
 
 GRAVITY = np.array([0.0, -9.81])
 
+world = World(gravity=GRAVITY, world_origin=np.array([0.0, 0.0]))
+
 position = np.array([0.0, 100.0])
 
-ball = Body("ball", mass=1.0, parent_frame=WORLD, origin=position)
+ball = world.add_body("ball", mass=1.0, parent_frame=world.world_frame, origin=position)
 
 fig, ax = plt.subplots()
 
-ball_fig = Circle((position[0], position[1]), radius=5)
+ball_fig = Circle((ball.frame.origin[0], ball.frame.origin[1]), radius=5)
 
 ax.add_patch(ball_fig)
 
