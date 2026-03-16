@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.patches import Circle
+from matplotlib.animation import FuncAnimation
 from reference_engine import Frame, Body, World
 
 GRAVITY = np.array([0.0, -9.81])
@@ -11,14 +11,28 @@ position = np.array([0.0, 100.0])
 
 ball = world.add_body("ball", mass=1.0, parent_frame=world.world_frame, origin=position)
 
+dt = 0.2
+
 fig, ax = plt.subplots()
 
-ball_fig = Circle((ball.frame.origin[0], ball.frame.origin[1]), radius=5)
+point, = ax.plot([], [], 'ro', markersize=10)
 
-ax.add_patch(ball_fig)
+ax.set_xlim(-10,10)
+ax.set_ylim(-110,110)
 
-ax.set_xlim(-50, 50)
-ax.set_ylim(-120, 120)
-ax.set_aspect("equal")
+
+def update(step):
+
+    world.step(dt)
+
+    x = ball.frame.origin[0]
+    y = ball.frame.origin[1]
+
+    point.set_data([x], [y])
+
+    return point,
+
+
+ani = FuncAnimation(fig, update, frames=500, interval=20)
 
 plt.show()
