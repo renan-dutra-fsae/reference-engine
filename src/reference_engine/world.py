@@ -1,13 +1,15 @@
 import numpy as np
+
+# The World class represents a physical simulation environment that contains multiple bodies and a global reference frame.
 from reference_engine import Frame
 from reference_engine import Body
 from reference_engine import Integrator
 
-# The World class represents a physical simulation environment that contains multiple bodies and a global reference frame.
-
 class World:
 
     def __init__(self, gravity, world_origin=None):
+
+
         self.bodies = []
         self.time = 0.0
         self.gravity = gravity

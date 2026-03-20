@@ -34,6 +34,11 @@ class Point:
     
     def to_array(self):
         return np.array([self.x, self.y, self.z])
+    
+    def distance_to(self, other):
+        if not isinstance(other, Point):
+            raise ValueError("Can only calculate distance to another point")
+        return np.sqrt((self.x - other.x)**2 + (self.y - other.y)**2 + (self.z - other.z)**2)
 
 class Vector:
 

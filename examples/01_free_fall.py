@@ -1,11 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
-from reference_engine import Frame, Body, World
+import reference_engine as re
 
 GRAVITY = np.array([0.0, -9.81])
 
-world = World(gravity=GRAVITY, world_origin=np.array([0.0, 0.0]))
+world = re.World(gravity=GRAVITY, world_origin=np.array([0.0, 0.0]))
 
 position = np.array([0.0, 100.0])
 
