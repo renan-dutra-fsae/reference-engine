@@ -11,26 +11,25 @@ from reference_engine.constraints import PositionConstraint
 # The ball is subject to gravity, and the position constraint ensures that the distance between the ball and the anchor remains constant, 
 # simulating the effect of the rod.
 
-x = 10.0
-y = 25.0
-position = Point(x, 0.0, y)
-velocity = Vector(0.0, 0.0, 0.0)
+
+position = Point(2, 0.0, 52.0)
+velocity = Vector(-1.0, 0.0, 0.0)
 g_vector = Vector(0.0, 0.0, -9.81)
 world = World(world_origin=np.array([0.0, 0.0, 0.0]))
 ball = world.add_particle(body_name="ball", mass=10.0, position=position, velocity=velocity)
 gravity = Gravity("gravity", g_vector)
 gravity.set(ball)
 world.add_force(gravity)
-world.set_solver_iterations(30)
+world.set_solver_iterations(20)
 
 
-anchor = world.add_particle(body_name="anchor", mass=float('inf'), position=Point(0.0, 0.0, 100.0) , velocity=Vector(0.0, 0.0, 0.0))
-coord = (ball.position - anchor.position).magnitude()
-constraint = world.add_position_constraint(constraint_name="Pendulum", p1=anchor, p2=ball, rest_length=coord)
+anchor = world.add_particle(body_name="anchor", mass=float('inf'), position=Point(0.0, 0.0, 50.0) , velocity=Vector(0.0, 0.0, 0.0))
+coord = 4
+constraint = world.add_position_constraint("Pendulum", anchor, ball, coord)
 
 
 fig, ax = plt.subplots()
-point, = ax.plot([], [], 'ro', markersize=10)
+point, = ax.plot([], [], 'ro', markersize=5)
 ax.set_xlim(-10,10)
 ax.set_ylim(-110,110)
 
@@ -38,7 +37,7 @@ dt = 0.01
 
 # The update function is called for each frame of the animation. It advances the simulation by one time step, updates the position of the ball, and prints the current position, velocity, and net force to the console.
 
-initial_velocity = Point(-2.0, 0.0, 0.0)
+initial_velocity = Point(-1.0, 0.0, 0.0)
 
 ball.prev_position = ball.position - initial_velocity * dt
 

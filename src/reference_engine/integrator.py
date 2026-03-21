@@ -16,10 +16,8 @@ class Integrator:
         a = body.resultant / body.mass
         acceleration = a.to_point()
 
-        new_position = (
-            body.position
-            + (body.position - body.prev_position)
-            + acceleration * (dt ** 2)
-        )
+        new_position = (body.position + (body.position - body.prev_position) + acceleration * (dt ** 2))
 
-        body.position = new_position
+        body.prev_position = body.position
+        body.position = new_position.copy()
+        body.set_velocity(dt)

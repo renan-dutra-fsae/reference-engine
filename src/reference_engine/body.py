@@ -68,15 +68,16 @@ class RigidBody(Body):
 
 class Particle(Body):
 
-    def __init__(self, name, mass=0.0, position_point=None, velocity_vector=None):
+    def __init__(self, name, mass=0.0, position_point=None, velocity= Vector(0,0,0)):
         super().__init__(name, mass)
         assert isinstance(position_point, Point), f"Position must be a Point, got {type(position_point)}"
-        assert isinstance(velocity_vector, Vector), f"Velocity must be a Vector, got {type(velocity_vector)}"
-        self.position = position_point
+#       assert isinstance(velocity_vector, Vector), f"Velocity must be a Vector, got {type(velocity_vector)}"   NOT NEEDED
+        self.position = position_point.copy()
         self.x = position_point.x
         self.y = position_point.y
         self.z = position_point.z
         self.prev_position = self.position.copy()
+        self.velocity = velocity.copy()
 
     def set_velocity(self, dt):
         self.velocity = (self.position - self.prev_position) / dt

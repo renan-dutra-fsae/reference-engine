@@ -28,7 +28,7 @@ class World:
     def set_solver_iterations(self, iterations):
         self.solver_iterations = iterations
 
-    def add_particle(self, body_name, mass=0.0, position=None, velocity=None):
+    def add_particle(self, body_name, mass, position, velocity):
         particle = Particle(body_name, mass, position, velocity)
         self.bodies.append(particle)
         return particle
@@ -50,8 +50,6 @@ class World:
         self.constraints.append(constraint)
 
     def step(self, dt):
-        for p in self.bodies:
-            p.prev_position = p.position.copy()
 
         for body in self.bodies: #Clear forces on each body before applying new forces
             body.clear_forces()
@@ -65,5 +63,9 @@ class World:
         for _ in range(self.solver_iterations): #Iteratively solve constraints (simple Gauss-Seidel style)
             for constraint in self.constraints:
                 constraint.solve()
+
+        for body in self.bodies: #Update velocities after constraint correction
+            if body.mass != float('inf'):
+                body.set_velocity(dt)
 
         self.time += dt
