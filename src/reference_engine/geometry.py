@@ -6,7 +6,7 @@ import numpy as np
 class Point:
 
 # The point class represents a point in 3D space. It has x, y, and z coordinates.    
-    def __init__(self, x, y, z=0, array=None): # Allow initialization from an array
+    def __init__(self, x=0, y=0, z=0, array=None): # Allow initialization from an array
         if array is not None:
             assert isinstance(array, (list, np.ndarray)) and len(array) == 3, "Array must be a list or numpy array of length 3"
             self.x, self.y, self.z = array
@@ -28,9 +28,32 @@ class Point:
         if not isinstance(other, Point):
             return False
         return self.x == other.x and self.y == other.y and self.z == other.z
+    
+    def __add__(self, point):
+        if not isinstance(point, Point):
+            raise ValueError(f"Can only add a point to another point, point is of type {type(point)}")
+        return Point(self.x + point.x, self.y + point.y, self.z + point.z)
 
-    def point_to_vector(self):
-        return Vector(self.x, self.y, self.z)
+    def __sub__(self, other):
+        if not isinstance(other, Point):
+            raise ValueError(f"Can only subtract a point from another point, other is of type {type(other)}")
+        return Point(self.x - other.x, self.y - other.y, self.z - other.z)
+    
+    def __mul__(self, scalar):
+        if not isinstance(scalar, (int, float)):
+            raise ValueError(f"Can only multiply a point by a scalar, scalar is of type {type(scalar)}")
+        return Point(self.x * scalar, self.y * scalar, self.z * scalar)
+    
+    def __truediv__(self, scalar):
+        if not isinstance(scalar, (int, float)):
+            raise ValueError(f"Can only divide a point by a scalar, scalar is of type {type(scalar)}")
+        if scalar == 0:
+            raise ValueError("Cannot divide by zero")
+        return Point(self.x / scalar, self.y / scalar, self.z / scalar)
+
+    def to_vector(self, other):
+        assert isinstance(other, Point), f"Can only convert to vector from another point, point is of type {type(other)}"
+        return Vector(other.x - self.x, other.y - self.y, other.z - self.z)
     
     def to_array(self):
         return np.array([self.x, self.y, self.z])
@@ -72,39 +95,39 @@ class Vector:
     
     def __eq__(self, other):
         if not isinstance(other, Vector):
-            raise ValueError("Can only compare with another vector")
+            raise ValueError(f"Can only compare with another vector, other is of type {type(other)}")
         return self.x == other.x and self.y == other.y and self.z == other.z
     
     def __add__(self, other):
         if not isinstance(other, Vector):
-            raise ValueError("Can only add another vector")
+            raise ValueError(f"Can only add another vector, other is of type {type(other)}")
         return Vector(self.x + other.x, self.y + other.y, self.z + other.z)
 
     def __sub__(self, other):
         if not isinstance(other, Vector):
-            raise ValueError("Can only subtract another vector")
+            raise ValueError(f"Can only subtract another vector, other is of type {type(other)}")
         return Vector(self.x - other.x, self.y - other.y, self.z - other.z)
 
     def __mul__(self, scalar):
         if not isinstance(scalar, (int, float)):
-            raise ValueError("Can only multiply by a scalar")
+            raise ValueError(f"Can only multiply by a scalar, scalar is of type {type(scalar)}")
         return Vector(self.x * scalar, self.y * scalar, self.z * scalar)
 
     def __truediv__(self, scalar):
         if not isinstance(scalar, (int, float)):
-            raise ValueError("Can only divide by a scalar")
+            raise ValueError(f"Can only divide by a scalar, scalar is of type {type(scalar)}")
         if scalar == 0:
             raise ValueError("Cannot divide by zero")
         return Vector(self.x / scalar, self.y / scalar, self.z / scalar)
 
     def dot(self, other):
         if not isinstance(other, Vector):
-            raise ValueError("Can only calculate dot product with another vector")
+            raise ValueError(f"Can only calculate dot product with another vector, other is of type {type(other)}")
         return self.x * other.x + self.y * other.y + self.z * other.z
 
     def cross(self, other):
         if not isinstance(other, Vector):
-            raise ValueError("Can only calculate cross product with another vector")
+            raise ValueError(f"Can only calculate cross product with another vector, other is of type {type(other)}")
         return Vector(self.y * other.z - self.z * other.y, self.z * other.x - self.x * other.z, self.x * other.y - self.y * other.x)
 
     def magnitude(self):
@@ -113,11 +136,15 @@ class Vector:
     def normalize(self):
         mag = self.magnitude()
         if mag == 0:
-            raise ValueError("Cannot normalize a zero vector")
+            raise ValueError(f"Cannot normalize a zero vector")
         return Vector(self.x / mag, self.y / mag, self.z / mag)
     
     def to_array(self):
         return np.array([self.x, self.y, self.z])
+    
+    def to_point(self):
+        return Point(self.x, self.y, self.z)
+        
 
 
 class Line:
@@ -131,8 +158,8 @@ class Line:
     def __init__(self, point, vector):
         assert isinstance(point, Point), f"Esperado um objeto do tipo Point, mas recebeu {type(point)}"
         assert isinstance(vector, Vector), f"Esperado um objeto do tipo Vector, mas recebeu {type(vector)}"
-        self.point = point(point.x, point.y, point.z)  # Ensure it's a point instance
-        self.vector = vector(vector.x, vector.y, vector.z)  # Ensure it's a vector instance
+        self.point = Point(point.x, point.y, point.z)  # Ensure it's a point instance
+        self.vector = Vector(vector.x, vector.y, vector.z)  # Ensure it's a vector instance
 
     def __str__(self):
         return f"line(point={self.point}, vector={self.vector})" 
