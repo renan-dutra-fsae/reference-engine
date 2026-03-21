@@ -58,6 +58,9 @@ class Point:
         assert isinstance(other, Point), f"Can only convert to vector from another point, point is of type {type(other)}"
         return Vector(other.x - self.x, other.y - self.y, other.z - self.z)
     
+    def as_vector(self):
+        return Vector(self.x , self.y, self.z)
+    
     def to_array(self):
         return np.array([self.x, self.y, self.z])
     
@@ -65,6 +68,9 @@ class Point:
         if not isinstance(other, Point):
             raise ValueError("Can only calculate distance to another point")
         return np.sqrt((self.x - other.x)**2 + (self.y - other.y)**2 + (self.z - other.z)**2)
+    
+    def magnitude(self):
+        return np.sqrt(self.x**2 + self.y**2 + self.z**2)
 
 class Vector:
 

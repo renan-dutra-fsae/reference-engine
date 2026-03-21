@@ -76,14 +76,13 @@ class Particle(Body):
         self.x = position_point.x
         self.y = position_point.y
         self.z = position_point.z
-        self.velocity = velocity_vector
+        self.prev_position = self.position.copy()
 
-    def set_velocity(self, velocity):
-        if not isinstance(velocity, Vector):
-            raise ValueError(f"Velocity must be a Vector, got {type(velocity)}")
-        self.velocity = velocity
+    def set_velocity(self, dt):
+        self.velocity = (self.position - self.prev_position) / dt
     
-    def get_velocity(self):
+    def get_velocity(self,dt):
+        self.set_velocity(dt)
         return self.velocity
     
     def set_position(self, position):

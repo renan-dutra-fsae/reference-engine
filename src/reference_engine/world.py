@@ -5,6 +5,8 @@ from reference_engine import Frame
 from reference_engine.body import Particle, RigidBody
 from reference_engine import Integrator
 from reference_engine import Force
+from reference_engine.geometry import Vector,Point
+from reference_engine.constraints import PositionConstraint
 
 # The World class manages the collection of bodies and forces, and provides a method to advance the simulation by a time step.
 # The step method applies all forces to their associated bodies, updates the state of each body using the integrator, and increments the simulation time.
@@ -15,11 +17,16 @@ class World:
 
     def __init__(self, world_origin=None):
 
+        self.solver_iterations  = 10
         self.forces = []
-        self.bodies = []
+        self.bodies = []  # Should diffentiate bodies from particles later
+        self.constraints = []
         self.time = 0.0
         self.integrator = Integrator()
-        self.world_frame = Frame("World", world_origin if world_origin is not None else np.zeros(2))
+        self.world_frame = Frame("World", world_origin if world_origin is not None else np.zeros(3))
+
+    def set_solver_iterations(self, iterations):
+        self.solver_iterations = iterations
 
     def add_particle(self, body_name, mass=0.0, position=None, velocity=None):
         particle = Particle(body_name, mass, position, velocity)
@@ -36,7 +43,16 @@ class World:
             raise ValueError(f"Force must be of type Force, got {type(force)}")
         self.forces.append(force)
 
+    def add_position_constraint(self, constraint_name, p1=None, p2=None, rest_length=0.0):
+        assert isinstance(p1, Particle), f"p1 must be a Particle, got {type(p1)}"
+        assert isinstance(p2, Particle), f"p2 must be a Particle, got {type(p2)}"
+        constraint = PositionConstraint(constraint_name, p1, p2, rest_length)
+        self.constraints.append(constraint)
+
     def step(self, dt):
+        for p in self.bodies:
+            p.prev_position = p.position.copy()
+
         for body in self.bodies: #Clear forces on each body before applying new forces
             body.clear_forces()
 
@@ -45,5 +61,9 @@ class World:
 
         for body in self.bodies: #Integrate motion of each body
             self.integrator.step(body, dt)
+        
+        for _ in range(self.solver_iterations): #Iteratively solve constraints (simple Gauss-Seidel style)
+            for constraint in self.constraints:
+                constraint.solve()
 
         self.time += dt
