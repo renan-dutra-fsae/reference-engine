@@ -1,21 +1,97 @@
 import numpy as np
-from reference_engine.frame import Frame
+from abc import ABC, abstractmethod 
+from reference_engine.geometry import Point, Vector
+from reference_engine import Frame 
+
 
 #Body class represents a physical object with mass, velocity, and acceleration. 
-#It is associated with a reference frame that defines its position and orientation in space. 
-# The class provides methods to set the velocity and acceleration of the body.
+# It is an abstract base class that defines the interface for specific types of bodies, such as rigid bodies and particles.
+# The RigidBody class is a specific type of Body that represents a rigid object. 
+# It has a position defined by a reference frame and a velocity vector.
+# The Particle class is another type of Body that represents a point mass. 
+# It has a position defined by a Point and a velocity defined by a Vector.
+
 
 class Body:
 
-    def __init__(self, name, mass=0.0, parent_frame=None, origin=None):
+    def __init__(self, name, mass=0.0):
         self.name = name
         self.mass = mass
+        self.resultant = Vector(0.0, 0.0, 0.0)
+
+    def apply_force(self, force):
+        self.resultant += force
+
+    def clear_forces(self):
+        self.resultant = Vector(0.0, 0.0, 0.0)
+
+    def get_net_force(self):
+        return self.resultant
+
+    @abstractmethod
+    def set_velocity(self, velocity): pass
+
+    @abstractmethod
+    def get_velocity(self): pass
+        
+    @abstractmethod
+    def set_position(self, position): pass
+
+    @abstractmethod
+    def get_position(self): pass
+
+class RigidBody(Body):
+
+    def __init__(self, name, mass=0.0, parent_frame=None, origin=None, angular_velocity=None):
+        super().__init__(name, mass)
+        assert isinstance(origin, Frame), f"Origin must be a Frame, got {type(origin)}"
+        assert isinstance(parent_frame, Frame), f"Parent frame must be a Frame, got {type(parent_frame)}"
+        self.position = Frame(name + "_frame", origin, parent=parent_frame)
         self.velocity = None
-        self.acceleration = None
-        self.frame = Frame(name + "_frame", parent=parent_frame, origin=origin)
+        self.omega = angular_velocity
+
+        def set_velocity(self, velocity):
+            if not isinstance(velocity, Vector):
+                raise ValueError(f"Velocity must be a Vector, got {type(velocity)}")
+            self.velocity = velocity
+
+        def get_velocity(self):
+            return self.velocity
+
+        def set_position(self, position):
+            if not isinstance(position, Point):
+                raise ValueError(f"Position must be a Point, got {type(position)}")
+            self.frame.origin = position
+
+        def get_position(self):
+            return self.frame.origin
+
+class Particle(Body):
+
+    def __init__(self, name, mass=0.0, position_point=None, velocity_vector=None):
+        super().__init__(name, mass)
+        assert isinstance(position_point, Point), f"Position must be a Point, got {type(position_point)}"
+        assert isinstance(velocity_vector, Vector), f"Velocity must be a Vector, got {type(velocity_vector)}"
+        self.position = position_point
+        self.x = position_point.x
+        self.y = position_point.y
+        self.z = position_point.z
+        self.velocity = velocity_vector
 
     def set_velocity(self, velocity):
-        self.velocity = np.array(velocity)
+        if not isinstance(velocity, Vector):
+            raise ValueError(f"Velocity must be a Vector, got {type(velocity)}")
+        self.velocity = velocity
+    
+    def get_velocity(self):
+        return self.velocity
+    
+    def set_position(self, position):
+        if not isinstance(position, Point):
+            raise ValueError(f"Position must be a Point, got {type(position)}")
+        self.position = position
+    
+    def get_position(self):
+        return self.position
 
-    def set_acceleration(self, acceleration):
-        self.acceleration = np.array(acceleration)
+    

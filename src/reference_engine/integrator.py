@@ -1,5 +1,6 @@
 from reference_engine import Frame
-from reference_engine import Body
+from reference_engine import body
+from reference_engine.body import Particle, RigidBody
 
 class Integrator:
 
@@ -8,6 +9,10 @@ class Integrator:
 # that can be selected by the user.
 
     def step(self, body, dt=0.01):
-
-        body.velocity += body.acceleration * dt
-        body.frame.translate(body.velocity * dt)
+        if isinstance(body, Particle):
+            body.velocity += body.get_net_force() / (body.mass * dt)
+            body.position += body.velocity.to_point() * dt
+        elif isinstance(body, RigidBody):
+            pass
+        else:
+            raise ValueError(f"Body must be of type Particle or RigidBody, got {type(body)}")

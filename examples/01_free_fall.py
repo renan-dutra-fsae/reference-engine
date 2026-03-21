@@ -1,38 +1,48 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
-import reference_engine as re
+from reference_engine.force import Gravity
+from reference_engine.world import World
+from reference_engine.geometry import Point, Vector
 
-GRAVITY = np.array([0.0, -9.81])
+# This example simulates a free fall of a particle under the influence of gravity.
 
-world = re.World(gravity=GRAVITY, world_origin=np.array([0.0, 0.0]))
+position = Point(0.0, 0.0, 100.0)
+velocity = Vector(0.0, 0.0, 0.0)
+g_vector = Vector(0.0, 0.0, -9.81)
+world = World(world_origin=np.array([0.0, 0.0]))
+ball = world.add_particle("ball", mass=1.0, position=position, velocity=velocity)
+gravity = Gravity("gravity", g_vector)
+gravity.set(ball)
+world.add_force(gravity)
 
-position = np.array([0.0, 100.0])
-
-ball = world.add_body("ball", mass=1.0, parent_frame=world.world_frame, origin=position)
-
-dt = 0.2
 
 fig, ax = plt.subplots()
-
 point, = ax.plot([], [], 'ro', markersize=10)
-
 ax.set_xlim(-10,10)
 ax.set_ylim(-110,110)
 
+dt = 0.5
+
+# The update function is called for each frame of the animation. It advances the simulation by one time step, updates the position of the ball, and prints the current position, velocity, and net force to the console.
 
 def update(step):
 
     world.step(dt)
 
-    x = ball.frame.origin[0]
-    y = ball.frame.origin[1]
+    pos = ball.get_position()
+    vel = ball.get_velocity()
+    f = ball.get_net_force()
+    x = pos.x
+    y = pos.z
 
     point.set_data([x], [y])
 
-    return point,
+    print("pos:", pos.z, "vel:", vel.z, "force:", f.z)
 
+    return point
+    
 
-ani = FuncAnimation(fig, update, frames=500, interval=20)
+ani = FuncAnimation(fig, update, frames=100, interval=20)
 
 plt.show()

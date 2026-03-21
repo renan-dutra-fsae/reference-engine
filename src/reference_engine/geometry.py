@@ -29,6 +29,9 @@ class Point:
             return False
         return self.x == other.x and self.y == other.y and self.z == other.z
     
+    def copy(self):
+        return Point(self.x, self.y, self.z)
+    
     def __add__(self, point):
         if not isinstance(point, Point):
             raise ValueError(f"Can only add a point to another point, point is of type {type(point)}")
@@ -97,6 +100,8 @@ class Vector:
         if not isinstance(other, Vector):
             raise ValueError(f"Can only compare with another vector, other is of type {type(other)}")
         return self.x == other.x and self.y == other.y and self.z == other.z
+    def copy(self):
+        return Vector(self.x, self.y, self.z)
     
     def __add__(self, other):
         if not isinstance(other, Vector):
@@ -175,6 +180,9 @@ class Line:
             raise ValueError("Can only compare with another line")
         return np.array_equal(self.point, other.point) and np.array_equal(self.vector, other.vector)
     
+    def copy(self):
+        return Line(self.point.copy(), self.vector.copy())
+
     def distance_to_point(self, point):
         # Calculate the distance from the line to a point
         assert isinstance(point, Point), f"Expected a Point object, but received {type(point)}"
@@ -281,6 +289,8 @@ class Plane:
         if not isinstance(other, Plane):
             raise ValueError(f"Can only compare with another plane. other is of type {type(other)}")
         return np.array_equal(self.point, other.point) and np.array_equal(self.normal, other.normal)
+    def copy(self):
+        return Plane(self.point.copy(), self.normal.copy())
     
     def distance_to_point(self, point):
         # Calculate the distance from the plane to a point

@@ -18,6 +18,9 @@ class Frame:
 
         if parent is not None:
             parent.children.append(self)
+    
+    def copy(self):
+        return Frame(self.name, self.origin.copy(), self.rotation.copy(), self.parent)
 
     def translate(self, translation):
         self.origin += translation
