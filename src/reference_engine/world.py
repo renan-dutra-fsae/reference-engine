@@ -57,15 +57,11 @@ class World:
         for force in self.forces: #Apply each force to its associated bodies
             force.apply()
 
-        for body in self.bodies: #Integrate motion of each body
-            self.integrator.step(body, dt)
-        
         for _ in range(self.solver_iterations): #Iteratively solve constraints (simple Gauss-Seidel style)
             for constraint in self.constraints:
                 constraint.solve()
 
-        for body in self.bodies: #Update velocities after constraint correction
-            if body.mass != float('inf'):
-                body.set_velocity(dt)
-
+        for body in self.bodies: #Integrate motion of each body
+            self.integrator.step(body, dt)
+        
         self.time += dt

@@ -12,7 +12,7 @@ from reference_engine.constraints import PositionConstraint
 # simulating the effect of the rod.
 
 
-position = Point(2, 0.0, 52.0)
+position = Point(10, 0.0, 40)
 velocity = Vector(-1.0, 0.0, 0.0)
 g_vector = Vector(0.0, 0.0, -9.81)
 world = World(world_origin=np.array([0.0, 0.0, 0.0]))
@@ -23,17 +23,17 @@ world.add_force(gravity)
 world.set_solver_iterations(20)
 
 
-anchor = world.add_particle(body_name="anchor", mass=float('inf'), position=Point(0.0, 0.0, 50.0) , velocity=Vector(0.0, 0.0, 0.0))
-coord = 4
+anchor = world.add_particle(body_name="anchor", mass=float('inf'), position=Point(0.0, 0.0, 50) , velocity=Vector(0.0, 0.0, 0.0))
+coord = np.sqrt(100 + 100)
 constraint = world.add_position_constraint("Pendulum", anchor, ball, coord)
 
 
 fig, ax = plt.subplots()
 point, = ax.plot([], [], 'ro', markersize=5)
-ax.set_xlim(-10,10)
-ax.set_ylim(-110,110)
+ax.set_xlim(-50,50)
+ax.set_ylim(-50,50)
 
-dt = 0.01
+dt = 0.1
 
 # The update function is called for each frame of the animation. It advances the simulation by one time step, updates the position of the ball, and prints the current position, velocity, and net force to the console.
 
