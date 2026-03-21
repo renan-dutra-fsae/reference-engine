@@ -289,6 +289,7 @@ class Plane:
         if not isinstance(other, Plane):
             raise ValueError(f"Can only compare with another plane. other is of type {type(other)}")
         return np.array_equal(self.point, other.point) and np.array_equal(self.normal, other.normal)
+    
     def copy(self):
         return Plane(self.point.copy(), self.normal.copy())
     
