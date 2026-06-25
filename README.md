@@ -113,7 +113,7 @@ python examples/03_pendulum.py
 - [ ] Vehicle dynamics: double-wishbone kinematics, camber gain, bump steer
 
 <p align="center">
-  <img src="docs/suspension_kinematics.png" alt="2d Kinematics" width="420">
+  <img src="docs/suspension_kinematics.png" alt="2d Kinematics" width="840">
   <br>
   <em>2d kinematics.</em>
 </p>
