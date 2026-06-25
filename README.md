@@ -112,6 +112,12 @@ python examples/03_pendulum.py
 - [ ] Multibody systems and chained constraints
 - [ ] Vehicle dynamics: double-wishbone kinematics, camber gain, bump steer
 
+<p align="center">
+  <img src="docs/suspension_kinematics.png" alt="2d Kinematics" width="420">
+  <br>
+  <em>2d kinematics.</em>
+</p>
+
 ## Current limitations
 
 This is a work in progress, and a couple of things are intentionally honest about it:
